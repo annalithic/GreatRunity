@@ -7,12 +7,18 @@ using UnityEditor;
 
 [ExecuteInEditMode]
 public class GreatRunity : MonoBehaviour {
+
+
+
     public int map1;
     public int map2;
     public int map3;
     public int map4;
     public string path;
-    public string gamePath = @"C:\Games\Steam\steamapps\common\ELDEN RING\Game"; //TODO DEHARDCODE
+    public string gamePath;
+
+    //these are too big because of bone scaling memes, so we won't use their meshes
+    string[] disallowedAssets = { "AEG099_680", "AEG099_720", };
 
     enum PartType {
         PartTypeMapPiece = 0,
@@ -37,7 +43,8 @@ public class GreatRunity : MonoBehaviour {
     public void ImportMapModels(int m1, int m2, int m3, int m4) {
 
         HashSet<string> assets = new HashSet<string>();
-        
+        HashSet<string> mappieces = new HashSet<string>();
+
         foreach (string line in File.ReadAllLines(GetPath(m1, m2, m3, m4))) {
             string[] words = line.Split('|');
             PartType type = (PartType)int.Parse(words[1]);
@@ -49,12 +56,11 @@ public class GreatRunity : MonoBehaviour {
                 asset = asset.ToLower();
                 assets.Add($"asset\\aeg\\{asset.Substring(0, 6)}\\{asset}.geombnd.dcx");
 
-            } //else if (type == PartType.PartTypeMapPiece) {
-                //string piece = words[0].IndexOf('-') == -1 ? words[0] : words[0].Substring(words[0].IndexOf('-') + 1);
-                //piece = piece.Substring(1, piece.LastIndexOf('_') - 1);
-                //models.Add(piece);
-                //Debug.Log(string.Format(@"E:\Anna\Anna\Unity\DSToolsEX\Assets\map\m{0:00}\m{0:00}_{1:00}_{2:00}_{3:00}\m{0:00}_{1:00}_{2:00}_{3:00}_{4}.prefab", map, x, y, level, asset));
-            //}
+            } else if (type == PartType.PartTypeMapPiece) {
+                string piece = words[0].IndexOf('-') == -1 ? words[0] : words[0].Substring(words[0].IndexOf('-') + 1);
+                piece = piece.Substring(1, piece.LastIndexOf('_') - 1);
+                mappieces.Add(string.Format(@"map\m{0:00}\m{0:00}_{1:00}_{2:00}_{3:00}\m{0:00}_{1:00}_{2:00}_{3:00}_{4}.mapbnd.dcx", m1, m2, m3, m4, piece));
+            }
         }
 
         int import = 0;
@@ -67,6 +73,16 @@ public class GreatRunity : MonoBehaviour {
                 ImportModel(asset);
             }
         }
+        foreach (string piece in mappieces) {
+            if (!File.Exists(Path.Combine(Application.dataPath, piece.Replace(".mapbnd.dcx", ".mesh")))) {
+                if (import == 0) {
+                    AssetDatabase.StartAssetEditing();
+                }
+                import++;
+                ImportModel(piece);
+            }
+        }
+
         if (import > 0) AssetDatabase.StopAssetEditing();
         Debug.Log($"Imported {import} models");
 
@@ -76,6 +92,7 @@ public class GreatRunity : MonoBehaviour {
 
     public void ImportMap(int m1, int m2, int m3, int m4) {
 
+        HashSet<string> disallowed = new HashSet<string>(disallowedAssets);
 
         //TODO dunno
         Dictionary<string, string> aegNames = new Dictionary<string, string>();
@@ -84,6 +101,7 @@ public class GreatRunity : MonoBehaviour {
 
         GameObject partPrefab = Resources.Load<GameObject>("PartPrefab");
         Material partMat = (Material)AssetDatabase.LoadAssetAtPath($@"Assets\Art\matAsset.mat", typeof(Material));
+        Material mapMat = (Material)AssetDatabase.LoadAssetAtPath($@"Assets\Art\matMap.mat", typeof(Material));
         Material noColMat = (Material)AssetDatabase.LoadAssetAtPath($@"Assets\Art\matNoCol.mat", typeof(Material));
 
         string path = GetPath(m1, m2, m3, m4);
@@ -105,6 +123,9 @@ public class GreatRunity : MonoBehaviour {
             if (type == PartType.PartTypeAsset) {
                 string asset = words[0].IndexOf('-') == -1 ? words[0] : words[0].Substring(words[0].IndexOf('-') + 1);
                 asset = asset.Substring(0, asset.LastIndexOf('_'));
+
+                if (disallowed.Contains(asset)) continue;
+
                 if (File.Exists(Path.Combine(Application.dataPath, $@"asset\aeg\{asset.Substring(0, 6)}\{asset}.mesh"))) {
                     MeshFilter m = part.GetComponent<MeshFilter>();
                     m.sharedMesh = (Mesh)AssetDatabase.LoadAssetAtPath($@"Assets\asset\aeg\{asset.Substring(0, 6)}\{asset}.mesh", typeof(Mesh));
@@ -128,15 +149,23 @@ public class GreatRunity : MonoBehaviour {
                 /*
             } else if (type == PartType.PartTypeEnemy || type == PartType.PartTypePlayer || type == PartType.PartTypeDummyEnemy) {
                 obj = (GameObject)AssetDatabase.LoadAssetAtPath("Assets/PrefabChr.prefab", typeof(GameObject));
+                */
             } else if (type == PartType.PartTypeMapPiece) {
 
                 string asset = words[0].IndexOf('-') == -1 ? words[0] : words[0].Substring(words[0].IndexOf('-') + 1);
                 asset = asset.Substring(1, asset.LastIndexOf('_') - 1);
-                Debug.Log(string.Format(@"E:\Anna\Anna\Unity\DSToolsEX\Assets\map\m{0:00}\m{0:00}_{1:00}_{2:00}_{3:00}\m{0:00}_{1:00}_{2:00}_{3:00}_{4}.prefab", map, x, y, level, asset));
-                if (File.Exists(string.Format(@"E:\Anna\Anna\Unity\DSToolsEX\Assets\map\m{0:00}\m{0:00}_{1:00}_{2:00}_{3:00}\m{0:00}_{1:00}_{2:00}_{3:00}_{4}.prefab", map, x, y, level, asset))) {
-                    obj = (GameObject)AssetDatabase.LoadAssetAtPath(string.Format(@"Assets\map\m{0:00}\m{0:00}_{1:00}_{2:00}_{3:00}\m{0:00}_{1:00}_{2:00}_{3:00}_{4}.prefab", map, x, y, level, asset), typeof(GameObject));
+                string assetPath = string.Format(@"map\m{0:00}\m{0:00}_{1:00}_{2:00}_{3:00}\m{0:00}_{1:00}_{2:00}_{3:00}_{4}.mesh", m1, m2, m3, m4, asset);
+                Debug.Log(assetPath);
+                if (File.Exists(Path.Combine(Application.dataPath, assetPath))) {
+                    MeshFilter m = part.GetComponent<MeshFilter>();
+                    m.sharedMesh = (Mesh)AssetDatabase.LoadAssetAtPath(Path.Combine("Assets", assetPath), typeof(Mesh));
+
+                    MeshRenderer r = part.GetComponent<MeshRenderer>();
+                    Material[] mats = new Material[m.sharedMesh.subMeshCount];
+                    for (int i = 0; i < mats.Length; i++) mats[i] = mapMat;
+                    r.sharedMaterials = mats;
                 }
-                */
+                
             }
 
             //part.SetParent(root);
@@ -150,7 +179,7 @@ public class GreatRunity : MonoBehaviour {
             Mesh m = FlverUtilities.ImportFlverMesh(flv);
             m.name = Path.GetFileNameWithoutExtension(path);
             if (!Directory.Exists(Path.Combine(Application.dataPath, Path.GetDirectoryName(path)))) Directory.CreateDirectory(Path.Combine(Application.dataPath, Path.GetDirectoryName(path)));
-            AssetDatabase.CreateAsset(m, Path.Combine("Assets", path.Replace(".geombnd.dcx", ".mesh")));
+            AssetDatabase.CreateAsset(m, Path.Combine("Assets", path.Replace(".geombnd.dcx", ".mesh").Replace(".mapbnd.dcx", ".mesh")));
         } catch {
             Debug.LogError(Path.GetFileName(path) + "import failed.");
         }
