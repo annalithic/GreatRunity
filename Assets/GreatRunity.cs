@@ -32,6 +32,7 @@ public class GreatRunity : MonoBehaviour {
     }
 
 
+    public static string MapName(int m1, int m2, int m3, int m4) { return string.Format("m{0:00}_{1:00}_{2:00}_{3:00}", m1, m2, m3, m4); }
     public string GetPath() {
         return GetPath(map1, map2, map3, map4);
     }
@@ -42,7 +43,8 @@ public class GreatRunity : MonoBehaviour {
     public string GetLightPath() { return GetLightPath(map1, map2, map3, map4); }
 
     ///TODO haligtree and siofra bank have _0001 btl files?
-    public string GetLightPath(int m1, int m2, int m3, int m4) {
+    public string GetLightPath(int m1, int m2, int m3, int m4, bool small = false) {
+        if (small) return string.Format(@"map\m{0:00}\m{0:00}_{1:00}_{2:00}_{3:00}\m{0:00}_{1:00}_{2:00}_{3:00}_0000.btl.dcx", m1, m2, m3, m4); //wow ugly
         return Path.Combine(gamePath, string.Format(@"map\m{0:00}\m{0:00}_{1:00}_{2:00}_{3:00}\m{0:00}_{1:00}_{2:00}_{3:00}_0000.btl.dcx", m1, m2, m3, m4));
     }
 
@@ -197,6 +199,7 @@ public class GreatRunity : MonoBehaviour {
         BTL btl = BTL.Read(Path.Combine(gamePath, GetLightPath(m1, m2, m3, m4)));
         GameObject lightPrefab = Resources.Load<GameObject>("LightPrefab");
         Transform root = new GameObject(string.Format("m{0:00}_{1:00}_{2:00}_{3:00}_0000_LIGHTS", m1, m2, m3, m4)).transform;
+        root.gameObject.AddComponent<BTLComponent>().SetData(btl.Version, m1, m2, m3, m4);
         for(int i = 0; i < btl.Lights.Count; i++) Instantiate(lightPrefab, root).GetComponent<SoulsLightComponent>().Import(btl.Lights[i]);
     }
 }

@@ -15,6 +15,11 @@ public class GreatRunityEditor : Editor {
         g.gamePath = EditorGUILayout.TextField(g.gamePath);
         EditorGUILayout.EndHorizontal();
 
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("Mod Name: ", GUILayout.ExpandWidth(false));
+        g.modName = EditorGUILayout.TextField(g.modName);
+        EditorGUILayout.EndHorizontal();
+
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Map:");
