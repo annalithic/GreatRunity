@@ -14,8 +14,8 @@ public class GreatRunity : MonoBehaviour {
     public int map2;
     public int map3;
     public int map4;
-    public string path;
     public string gamePath;
+    public string modName;
 
     //these are too big because of bone scaling memes, so we won't use their meshes
     string[] disallowedAssets = { "AEG099_680", "AEG099_720", };
@@ -37,6 +37,13 @@ public class GreatRunity : MonoBehaviour {
     }
     public string GetPath(int m1, int m2, int m3, int m4) {     //TODO MSBE
         return string.Format(@"E:\Extracted\Souls\Elden Ring\mapstudio\m{0:00}_{1:00}_{2:00}_{3:00}.txt", m1, m2, m3, m4) ;
+    }
+
+    public string GetLightPath() { return GetLightPath(map1, map2, map3, map4); }
+
+    ///TODO haligtree and siofra bank have _0001 btl files?
+    public string GetLightPath(int m1, int m2, int m3, int m4) {
+        return Path.Combine(gamePath, string.Format(@"map\m{0:00}\m{0:00}_{1:00}_{2:00}_{3:00}\m{0:00}_{1:00}_{2:00}_{3:00}_0000.btl.dcx", m1, m2, m3, m4));
     }
 
     public void ImportMapModels() { ImportMapModels(map1, map2, map3, map4); }
@@ -183,5 +190,13 @@ public class GreatRunity : MonoBehaviour {
         } catch {
             Debug.LogError(Path.GetFileName(path) + "import failed.");
         }
+    }
+
+    public void ImportLights() { ImportLights(map1, map2, map3, map4); }
+    public void ImportLights(int m1, int m2, int m3, int m4) {
+        BTL btl = BTL.Read(Path.Combine(gamePath, GetLightPath(m1, m2, m3, m4)));
+        GameObject lightPrefab = Resources.Load<GameObject>("LightPrefab");
+        Transform root = new GameObject(string.Format("m{0:00}_{1:00}_{2:00}_{3:00}_0000_LIGHTS", m1, m2, m3, m4)).transform;
+        for(int i = 0; i < btl.Lights.Count; i++) Instantiate(lightPrefab, root).GetComponent<SoulsLightComponent>().Import(btl.Lights[i]);
     }
 }

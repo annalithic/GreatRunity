@@ -36,24 +36,23 @@ public class GreatRunityEditor : Editor {
 
         EditorGUILayout.EndHorizontal();
 
-        
+
+        EditorGUILayout.BeginHorizontal();
         using (new EditorGUI.DisabledScope(!File.Exists(g.GetPath()))) {
-            EditorGUILayout.BeginHorizontal();
+            
             if (GUILayout.Button("Import models")) g.ImportMapModels();
             if (GUILayout.Button("Import map")) g.ImportMap();
-            EditorGUILayout.EndHorizontal();
-
-            using (new EditorGUI.DisabledScope(g.map1 != 60 || g.map4 != 0)) {
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Import parent models")) ;
-                if (GUILayout.Button("Import parent maps"));
-                EditorGUILayout.EndHorizontal();
-            }
         }
+        using (new EditorGUI.DisabledScope(!File.Exists(g.GetLightPath()))) {
+            if (GUILayout.Button("Import lights")) g.ImportLights();
+        }
+        EditorGUILayout.EndHorizontal();
 
-
-        
-        
-
+        using (new EditorGUI.DisabledScope(g.map1 != 60 || g.map4 != 0)) {
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Import parent models")) ;
+            if (GUILayout.Button("Import parent maps"));
+            EditorGUILayout.EndHorizontal();
+        }
     }
 }
