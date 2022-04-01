@@ -5,73 +5,73 @@ using UnityEditor;
 using SoulsFormats;
 
 [CustomEditor(typeof(SoulsLightComponent))]
+[CanEditMultipleObjects]
 public class SoulsLightComponentEditor : Editor
 {
+    static string[] propertyNames = {
+        "l.<Type>k__BackingField",
+        "l.<Unk1C>k__BackingField",
+        "diffuseColor",
+        "l.<DiffusePower>k__BackingField",
+        "specularColor",
+        "l.<CastShadows>k__BackingField",
+        "l.<SpecularPower>k__BackingField",
+        "l.<ConeAngle>k__BackingField",
+        "l.<Unk30>k__BackingField",
+        "l.<Unk34>k__BackingField",
+        "l.<Unk50>k__BackingField",
+        "l.<Unk54>k__BackingField",
+        "l.<Radius>k__BackingField",
+        "l.<Unk5C>k__BackingField",
+        "l.<Unk68>k__BackingField",
+        "shadowColor",
+        "l.<Unk70>k__BackingField",
+        "l.<FlickerIntervalMin>k__BackingField",
+        "l.<FlickerIntervalMax>k__BackingField",
+        "l.<FlickerBrightnessMult>k__BackingField",
+        "l.<Unk80>k__BackingField",
+        "l.<Unk88>k__BackingField",
+        "l.<Unk90>k__BackingField",
+        "l.<Unk98>k__BackingField",
+        "l.<NearClip>k__BackingField",
+        "unkA00",
+        "unkA01",
+        "unkA02",
+        "unkA03",
+        "l.<Sharpness>k__BackingField",
+        "l.<UnkAC>k__BackingField",
+        "l.<Width>k__BackingField",
+        "l.<UnkBC>k__BackingField",
+        "disableSomethingA",
+        "disableSomethingB",
+        "disableSomethingC",
+        "disableSomethingD",
+        "l.<UnkC4>k__BackingField",
+        "l.<UnkC8>k__BackingField",
+        "l.<UnkCC>k__BackingField",
+        "l.<UnkD0>k__BackingField",
+        "l.<UnkD4>k__BackingField",
+        "l.<UnkD8>k__BackingField",
+        "l.<UnkDC>k__BackingField",
+        "l.<UnkE0>k__BackingField",
+        "l.<UnkE4>k__BackingField",     
+    };
+
+    SerializedProperty[] properties;
 
     private void OnEnable() {
-        SoulsLightComponent l = (SoulsLightComponent)target;
+        properties = new SerializedProperty[propertyNames.Length];
+        for(int i = 0; i < properties.Length; i++) {
+            properties[i] = serializedObject.FindProperty(propertyNames[i]);
+        }
     }
 
     public override void OnInspectorGUI() {
-
-        //DrawDefaultInspector();
-
         serializedObject.Update();
-
-        //Unk00 = br.ReadBytes(16);
-        //Name = br.GetUTF16(namesStart + br.ReadVarint());
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<Type>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<Unk1C>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("diffuseColor"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<DiffusePower>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("specularColor"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<CastShadows>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<SpecularPower>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<ConeAngle>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<Unk30>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<Unk34>k__BackingField"));
-        //Position = br.ReadVector3();
-        //Rotation = br.ReadVector3();
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<Unk50>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<Unk54>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<Radius>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<Unk5C>k__BackingField"));
-        //Unk64 = br.ReadBytes(4); ALWAYS 00 00 00 01
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<Unk68>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("shadowColor"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<Unk70>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<FlickerIntervalMin>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<FlickerIntervalMax>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<FlickerBrightnessMult>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<Unk80>k__BackingField"));
-        //Unk84 = br.ReadBytes(4); ALWAYS 00 00 00 00
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<Unk88>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<Unk90>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<Unk98>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<NearClip>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("unkA00"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("unkA01"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("unkA02"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("unkA03"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<Sharpness>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<UnkAC>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<Width>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<UnkBC>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("disableSomethingA"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("disableSomethingB"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("disableSomethingC"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("disableSomethingD"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<UnkC4>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<UnkC8>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<UnkCC>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<UnkD0>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<UnkD4>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<UnkD8>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<UnkDC>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<UnkE0>k__BackingField"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("l.<UnkE4>k__BackingField"));
-
+        for (int i = 0; i < properties.Length; i++) EditorGUILayout.PropertyField(properties[i]);
         serializedObject.ApplyModifiedProperties();
-        ((SoulsLightComponent)target).UpdateLight();
-     }
+        for(int i = 0; i < targets.Length; i++) {
+            ((SoulsLightComponent)targets[i]).UpdateLight();
+        }
+    }
 }
