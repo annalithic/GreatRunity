@@ -373,7 +373,7 @@ class FlverUtilities
         return root;
     }
 
-    static public Mesh ImportFlverMesh(FLVER2 flver) {
+    static public Mesh ImportFlverMesh(FLVER2 flver, bool combineMeshes) {
 
         CombineInstance[] combine = new CombineInstance[flver.Meshes.Count];
 
@@ -449,7 +449,7 @@ class FlverUtilities
         }
 
         Mesh combinedMesh = new Mesh();
-        combinedMesh.CombineMeshes(combine, false);
+        combinedMesh.CombineMeshes(combine, combineMeshes);
         //Mesh combinedMesh = combine[1].mesh;
         return combinedMesh;
     }

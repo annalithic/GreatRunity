@@ -41,11 +41,21 @@ public class GreatRunityEditor : Editor {
 
         EditorGUILayout.EndHorizontal();
 
+        if (g.gamePath == null) return;
 
         EditorGUILayout.BeginHorizontal();
         using (new EditorGUI.DisabledScope(!File.Exists(g.GetPath()))) {
             
             if (GUILayout.Button("Import models")) g.ImportMapModels();
+            GUILayout.Label("Reimport", GUILayout.ExpandWidth(false));
+            g.reimportModels = EditorGUILayout.Toggle(g.reimportModels, GUILayout.MaxWidth(16));
+            GUILayout.Label("Combine Meshes", GUILayout.ExpandWidth(false));
+            g.combineMeshes = EditorGUILayout.Toggle(g.combineMeshes, GUILayout.MaxWidth(16));
+
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+
             if (GUILayout.Button("Import map")) g.ImportMap();
         }
         using (new EditorGUI.DisabledScope(!File.Exists(g.GetLightPath()))) {

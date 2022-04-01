@@ -140,7 +140,7 @@ public class Test : MonoBehaviour
             try {
                 FLVER2 flv = FLVER2.Read(file.Bytes);
                 //Debug.Log(flv.Meshes.Count);
-                Mesh m = FlverUtilities.ImportFlverMesh(flv);
+                Mesh m = FlverUtilities.ImportFlverMesh(flv, false);
                 m.name = Path.GetFileNameWithoutExtension(path);
                 if (saveFolder != "") {
                     if (!Directory.Exists(Path.Combine(Application.dataPath, saveFolder))) Directory.CreateDirectory(Path.Combine(Application.dataPath,saveFolder));

@@ -17,6 +17,9 @@ public class GreatRunity : MonoBehaviour {
     public string gamePath;
     public string modName;
 
+    public bool reimportModels;
+    public bool combineMeshes;
+
     //these are too big because of bone scaling memes, so we won't use their meshes
     string[] disallowedAssets = { "AEG099_680", "AEG099_720", };
 
@@ -48,8 +51,8 @@ public class GreatRunity : MonoBehaviour {
         return Path.Combine(gamePath, string.Format(@"map\m{0:00}\m{0:00}_{1:00}_{2:00}_{3:00}\m{0:00}_{1:00}_{2:00}_{3:00}_0000.btl.dcx", m1, m2, m3, m4));
     }
 
-    public void ImportMapModels() { ImportMapModels(map1, map2, map3, map4); }
-    public void ImportMapModels(int m1, int m2, int m3, int m4) {
+    public void ImportMapModels() { ImportMapModels(map1, map2, map3, map4, reimportModels, combineMeshes); }
+    public void ImportMapModels(int m1, int m2, int m3, int m4, bool reimport, bool combine) {
 
         HashSet<string> assets = new HashSet<string>();
         HashSet<string> mappieces = new HashSet<string>();
@@ -74,21 +77,21 @@ public class GreatRunity : MonoBehaviour {
 
         int import = 0;
         foreach (string asset in assets) {
-            if (!File.Exists(Path.Combine(Application.dataPath, asset.Replace(".geombnd.dcx", ".mesh")))) {
+            if (reimport || !File.Exists(Path.Combine(Application.dataPath, asset.Replace(".geombnd.dcx", ".mesh")))) {
                 if(import == 0) {
                     AssetDatabase.StartAssetEditing();
                 }
                 import++;
-                ImportModel(asset);
+                ImportModel(asset, combine);
             }
         }
         foreach (string piece in mappieces) {
-            if (!File.Exists(Path.Combine(Application.dataPath, piece.Replace(".mapbnd.dcx", ".mesh")))) {
+            if (reimport || !File.Exists(Path.Combine(Application.dataPath, piece.Replace(".mapbnd.dcx", ".mesh")))) {
                 if (import == 0) {
                     AssetDatabase.StartAssetEditing();
                 }
                 import++;
-                ImportModel(piece);
+                ImportModel(piece, combine);
             }
         }
 
@@ -164,7 +167,6 @@ public class GreatRunity : MonoBehaviour {
                 string asset = words[0].IndexOf('-') == -1 ? words[0] : words[0].Substring(words[0].IndexOf('-') + 1);
                 asset = asset.Substring(1, asset.LastIndexOf('_') - 1);
                 string assetPath = string.Format(@"map\m{0:00}\m{0:00}_{1:00}_{2:00}_{3:00}\m{0:00}_{1:00}_{2:00}_{3:00}_{4}.mesh", m1, m2, m3, m4, asset);
-                Debug.Log(assetPath);
                 if (File.Exists(Path.Combine(Application.dataPath, assetPath))) {
                     MeshFilter m = part.GetComponent<MeshFilter>();
                     m.sharedMesh = (Mesh)AssetDatabase.LoadAssetAtPath(Path.Combine("Assets", assetPath), typeof(Mesh));
@@ -181,11 +183,11 @@ public class GreatRunity : MonoBehaviour {
         }
     }
 
-    void ImportModel(string path) {
+    void ImportModel(string path, bool combine) {
         try  {
             BND4 bnd = BND4.Read(Path.Combine(gamePath, path));
             FLVER2 flv = FLVER2.Read(bnd.Files[0].Bytes);
-            Mesh m = FlverUtilities.ImportFlverMesh(flv);
+            Mesh m = FlverUtilities.ImportFlverMesh(flv, combine);
             m.name = Path.GetFileNameWithoutExtension(path);
             if (!Directory.Exists(Path.Combine(Application.dataPath, Path.GetDirectoryName(path)))) Directory.CreateDirectory(Path.Combine(Application.dataPath, Path.GetDirectoryName(path)));
             AssetDatabase.CreateAsset(m, Path.Combine("Assets", path.Replace(".geombnd.dcx", ".mesh").Replace(".mapbnd.dcx", ".mesh")));
