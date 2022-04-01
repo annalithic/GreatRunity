@@ -15,7 +15,7 @@ public class GreatRunity : MonoBehaviour {
     public int map3;
     public int map4;
     public string gamePath;
-    public string modName;
+    public string modPath;
 
     public bool reimportModels;
     public bool combineMeshes;

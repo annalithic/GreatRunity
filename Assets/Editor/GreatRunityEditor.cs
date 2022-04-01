@@ -17,7 +17,7 @@ public class GreatRunityEditor : Editor {
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Mod Name: ", GUILayout.ExpandWidth(false));
-        g.modName = EditorGUILayout.TextField(g.modName);
+        g.modPath = EditorGUILayout.TextField(g.modPath);
         EditorGUILayout.EndHorizontal();
 
 

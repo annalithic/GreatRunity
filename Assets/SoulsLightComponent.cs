@@ -29,6 +29,7 @@ public class SoulsLightComponent : MonoBehaviour
 
         name = l.Name;
         transform.position = new Vector3(l.Position.X, l.Position.Y, l.Position.Z);
+        transform.localEulerAngles = new Vector3(l.Rotation.X * Mathf.Rad2Deg, l.Rotation.Y * Mathf.Rad2Deg, l.Rotation.Z * Mathf.Rad2Deg);
 
         diffuseColor = ToUnityColor(l.DiffuseColor);
         specularColor = ToUnityColor(l.SpecularColor);
@@ -51,6 +52,7 @@ public class SoulsLightComponent : MonoBehaviour
     public BTL.Light Export() {
         l.Name = name;
         l.Position = new System.Numerics.Vector3(transform.localPosition.x, transform.localPosition.y, transform.localPosition.z);
+        l.Rotation = new System.Numerics.Vector3(transform.eulerAngles.x * Mathf.Deg2Rad, transform.eulerAngles.y * Mathf.Deg2Rad, transform.eulerAngles.z * Mathf.Deg2Rad);
 
 
         l.SpecularColor = ToSystemColor(specularColor);

@@ -16,8 +16,8 @@ public class BTLComponent : MonoBehaviour
     public void Export() {
         GreatRunity importer = GameObject.FindGameObjectWithTag("importer").GetComponent<GreatRunity>();
         if(importer == null) { Debug.LogError("Could not find importer"); return; }
-        if(importer.modName == null) { Debug.LogError("Mod name not set"); return; }
-        string exportPath = Path.Combine(Path.Combine(importer.gamePath, importer.modName), importer.GetLightPath(m1, m2, m3, m4, true));
+        if(importer.modPath == null) { Debug.LogError("Mod path not set"); return; }
+        string exportPath = Path.Combine(importer.modPath, importer.GetLightPath(m1, m2, m3, m4, true));
 
         BTL btl = new BTL();
         btl.Version = version;
