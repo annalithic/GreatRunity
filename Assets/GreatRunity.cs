@@ -56,7 +56,7 @@ public class GreatRunity : MonoBehaviour {
         return GetPath(map1, map2, map3, map4);
     }
     public string GetPath(int m1, int m2, int m3, int m4) {     //TODO MSBE
-        return string.Format(@"E:\Extracted\Souls\Elden Ring\mapstudio\m{0:00}_{1:00}_{2:00}_{3:00}.txt", m1, m2, m3, m4) ;
+        return Path.Combine(Path.GetDirectoryName(Application.dataPath), string.Format(@"mapstudio\m{0:00}_{1:00}_{2:00}_{3:00}.txt", m1, m2, m3, m4)) ;
     }
 
     public string GetLightPath() { return GetLightPath(map1, map2, map3, map4); }
@@ -124,7 +124,8 @@ public class GreatRunity : MonoBehaviour {
 
         //TODO dunno
         Dictionary<string, string> aegNames = new Dictionary<string, string>();
-        foreach (string line in File.ReadAllLines(@"E:\Extracted\Souls\Elden Ring\aegnames.txt")) aegNames[line.Split("\t")[0].ToUpper()] = line.Split("\t")[1];
+        foreach (string line in File.ReadAllLines(Path.Combine(Path.GetDirectoryName(Application.dataPath), @"res\aegnames.txt"))) 
+            aegNames[line.Split("\t")[0].ToUpper()] = line.Split("\t")[1];
 
 
         GameObject partPrefab = Resources.Load<GameObject>("PartPrefab");
@@ -170,9 +171,6 @@ public class GreatRunity : MonoBehaviour {
                     r.sharedMaterials = mats;
 
                     if (aegNames.ContainsKey(asset)) part.name = aegNames[asset];
-
-                //} else if (File.Exists($@"E:\Anna\Anna\Unity\DSToolsEX\Assets\Asset\{asset.Substring(3, 3)}\{asset}_01.prefab")) {
-                //    obj = (GameObject)AssetDatabase.LoadAssetAtPath($@"Assets\Asset\{asset.Substring(3, 3)}\{asset}_01.prefab", typeof(GameObject));
                 }
                 /*
             } else if (type == PartType.PartTypeEnemy || type == PartType.PartTypePlayer || type == PartType.PartTypeDummyEnemy) {
