@@ -10,18 +10,21 @@ public class GreatRunity : MonoBehaviour {
 
 
 
-    public int map1;
-    public int map2;
-    public int map3;
-    public int map4;
+    public byte map1;
+    public byte map2;
+    public byte map3;
+    public byte map4;
     public string gamePath;
     public string modPath;
 
     public bool reimportModels;
     public bool combineMeshes;
 
+    Dictionary<string, string> mapNames;
+
+
     //these are too big because of bone scaling memes, so we won't use their meshes
-    string[] disallowedAssets = { "AEG099_680", "AEG099_720", };
+    string[] disallowedAssets = { "AEG099_680", "AEG099_720", "AEG099_721" };
 
     enum PartType {
         PartTypeMapPiece = 0,
@@ -32,6 +35,19 @@ public class GreatRunity : MonoBehaviour {
         PartTypeDummyEnemy = 10,
         PartTypeConnectCollision = 11,
         PartTypeAsset = 13,
+    }
+
+    public string GetMapName() { return GetMapName(map1, map2, map3, map4); }
+    public string GetMapName(byte m1, byte m2, byte m3, byte m4) {
+        if(mapNames == null) {
+            mapNames = new Dictionary<string, string>();
+            foreach (string line in File.ReadAllLines(Path.Combine(Path.GetDirectoryName(Application.dataPath), @"res\mapnames.txt"))) {
+                mapNames[line.Split(':')[0]] = line.Split(':')[1];
+            }
+        }
+        string name = MapName(m1, m2, m3, m4);
+        if (mapNames.ContainsKey(name)) return mapNames[name];
+        return "";
     }
 
 
@@ -117,7 +133,7 @@ public class GreatRunity : MonoBehaviour {
         Material noColMat = (Material)AssetDatabase.LoadAssetAtPath($@"Assets\Art\matNoCol.mat", typeof(Material));
 
         string path = GetPath(m1, m2, m3, m4);
-        Transform root = new GameObject(Path.GetFileNameWithoutExtension(path)).transform;
+        Transform root = new GameObject(Path.GetFileNameWithoutExtension(path) + ".msb").transform;
         foreach (string line in File.ReadAllLines(path)) {
             string[] words = line.Split('|');
             PartType type = (PartType)int.Parse(words[1]);
@@ -178,6 +194,7 @@ public class GreatRunity : MonoBehaviour {
                 }
                 
             }
+            
 
             //part.SetParent(root);
         }
@@ -200,7 +217,7 @@ public class GreatRunity : MonoBehaviour {
     public void ImportLights(int m1, int m2, int m3, int m4) {
         BTL btl = BTL.Read(Path.Combine(gamePath, GetLightPath(m1, m2, m3, m4)));
         GameObject lightPrefab = Resources.Load<GameObject>("LightPrefab");
-        Transform root = new GameObject(string.Format("m{0:00}_{1:00}_{2:00}_{3:00}_0000_LIGHTS", m1, m2, m3, m4)).transform;
+        Transform root = new GameObject(string.Format("m{0:00}_{1:00}_{2:00}_{3:00}_0000.btl", m1, m2, m3, m4)).transform;
         root.gameObject.AddComponent<BTLComponent>().SetData(btl.Version, m1, m2, m3, m4);
         for(int i = 0; i < btl.Lights.Count; i++) Instantiate(lightPrefab, root).GetComponent<SoulsLightComponent>().Import(btl.Lights[i]);
     }
