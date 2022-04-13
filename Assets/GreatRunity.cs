@@ -24,7 +24,7 @@ public class GreatRunity : MonoBehaviour {
 
 
     //these are too big because of bone scaling memes, so we won't use their meshes
-    string[] disallowedAssets = { "AEG099_680", "AEG099_720", "AEG099_721" };
+    string[] disallowedAssets = { "AEG099_680", "AEG099_720", "AEG099_721", "AEG099_723" };
 
     enum PartType {
         PartTypeMapPiece = 0,
@@ -56,7 +56,7 @@ public class GreatRunity : MonoBehaviour {
         return GetPath(map1, map2, map3, map4);
     }
     public string GetPath(int m1, int m2, int m3, int m4) {     //TODO MSBE
-        return Path.Combine(Path.GetDirectoryName(Application.dataPath), string.Format(@"mapstudio\m{0:00}_{1:00}_{2:00}_{3:00}.txt", m1, m2, m3, m4)) ;
+        return Path.Combine(Path.GetDirectoryName(Application.dataPath), string.Format(@"res\mapstudio\m{0:00}_{1:00}_{2:00}_{3:00}.txt", m1, m2, m3, m4)) ;
     }
 
     public string GetLightPath() { return GetLightPath(map1, map2, map3, map4); }
